@@ -16,11 +16,12 @@ if [[ $iatest -gt 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 alias h="history | grep "
 alias ezsh="micro ~/.zshrc"
 alias cls='clear'
-alias ls='ls -aFh --color=always' # add colors and file type extensions
-alias ldir="ls -l | egrep '^d'"   # directories only
-alias las='ls -Al'                 # Hidden Files
-alias bat='batcat'
-alias sl="ls -l"
+alias lt="eza --tree --level=2 --long --icons --git"
+alias ls='eza --icons -a  --color=always' # add colors and file type extensions
+alias ldir="eza -l | egrep '^d'"   # directories only
+alias las='eza -Al'                 # Hidden Files
+alias bat='bat'
+alias sl="eza -l"
 alias da='date "+%Y-%m-%d %A %T %Z"'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -154,7 +155,9 @@ source $ZSH/oh-my-zsh.sh
 # Configurações do usuário
 
 # Definir cores para o ls no Linux
-export LS_COLORS="$(vivid generate snazzy)"
+export LS_COLORS="~/.config/eza"
+# export LS_COLORS='no=00:fi=00:di=01;94:ln=01;95:pi=40;93:so=01;95:do=01;95:bd=40;93;01:cd=40;93;01:or=40;91;01:ex=01;92:*.tar=01;91:*.tgz=01;91:*.arj=01;91:*.taz=01;91:*.lzh=01;91:*.zip=01;91:*.z=01;91:*.Z=01;91:*.gz=01;91:*.bz2=01;91:*.deb=01;91:*.rpm=01;91:*.jar=01;91:*.jpg=01;95:*.jpeg=01;95:*.gif=01;95:*.bmp=01;95:*.pbm=01;95:*.pgm=01;95:*.ppm=01;95:*.tga=01;95:*.xbm=01;95:*.xpm=01;95:*.tif=01;95:*.tiff=01;95:*.png=01;95:*.mov=01;95:*.mpg=01;95:*.mpeg=01;95:*.avi=01;95:*.fli=01;95:*.gl=01;95:*.dl=01;95:*.xcf=01;95:*.xwd=01;95:*.ogg=01;95:*.mp3=01;95:*.wav=01;95:*.xml=00;91:'
+eval "$(dircolors -b)"
 
 # Carregar o fzf, se disponível
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -165,10 +168,9 @@ source "$HOME/miniconda3/etc/profile.d/conda.sh"
 export CONDA_AUTO_ACTIVATE_BASE=false
 
 
-# Inicializar o Conda para o Zsh, se o script existir
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    . "$HOME/miniconda3/etc/profile.d/conda.sh"
-fi
+# >>> conda initialize >>>
+[ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ] && source "$HOME/miniconda3/etc/profile.d/conda.sh"
+# <<< conda initialize <<<
 
 
 # Definir editor padrão
