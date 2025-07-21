@@ -1,6 +1,0 @@
-2025/05/03-14:32:33.518 738 Creating DB /home/dinizjp/.config/google-chrome/Default/WebStorage/13/IndexedDB/indexeddb.leveldb since it was missing.
-2025/05/03-14:32:33.523 738 Reusing MANIFEST /home/dinizjp/.config/google-chrome/Default/WebStorage/13/IndexedDB/indexeddb.leveldb/MANIFEST-000001
-2025/05/03-16:07:31.363 738 Level-0 table #5: started
-2025/05/03-16:07:31.366 738 Level-0 table #5: 1200 bytes OK
-2025/05/03-16:07:31.368 738 Delete type=0 #3
-2025/05/03-16:07:31.368 738 Manual compaction at level-0 from (begin) .. (end); will stop at (end)
