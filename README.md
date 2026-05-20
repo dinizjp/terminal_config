@@ -30,7 +30,7 @@ bash install_linux.sh
 | btop | Monitor de sistema |
 | fastfetch | System info |
 | micro | Editor de terminal |
-| alacritty | Terminal GPU-accelerated |
+| ghostty | Terminal GPU-accelerated |
 | FiraCode Nerd Font | Fonte com ícones |
 | Node.js | Runtime JS |
 | Claude Code | CLI da Anthropic |
@@ -39,7 +39,7 @@ bash install_linux.sh
 
 ## Tema
 
-Catppuccin Mocha em todos os apps (alacritty, btop, eza).
+Catppuccin Mocha em todos os apps (ghostty, btop, eza).
 
 ## Chaves de API
 

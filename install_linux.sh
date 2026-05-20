@@ -140,6 +140,23 @@ fi
 command -v rtk &>/dev/null && rtk init -g
 ok "RTK"
 
+# ─── Ghostty ─────────────────────────────────────────────────────────────────
+if ! command -v ghostty &>/dev/null; then
+    case "$DISTRO" in
+        arch|manjaro|endeavouros|garuda)
+            sudo pacman -S --noconfirm ghostty 2>/dev/null || \
+            (command -v yay &>/dev/null && yay -S --noconfirm ghostty) || \
+            warn "Instale Ghostty manualmente: https://ghostty.org/download" ;;
+        *)
+            if command -v flatpak &>/dev/null; then
+                flatpak install -y flathub com.mitchellh.ghostty 2>/dev/null || true
+            else
+                warn "Instale Ghostty manualmente: https://ghostty.org/download"
+            fi ;;
+    esac
+fi
+ok "Ghostty"
+
 # ─── FiraCode Nerd Font ───────────────────────────────────────────────────────
 FONT_DIR="$HOME/.local/share/fonts"
 mkdir -p "$FONT_DIR"
@@ -156,12 +173,8 @@ ok "FiraCode Nerd Font"
 # ─── Dotfiles ─────────────────────────────────────────────────────────────────
 cp "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
-mkdir -p "$HOME/.config/alacritty/catppuccin"
-cp "$DOTFILES_DIR/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
-if [ ! -f "$HOME/.config/alacritty/catppuccin/catppuccin-mocha.toml" ]; then
-    curl -fsSLo "$HOME/.config/alacritty/catppuccin/catppuccin-mocha.toml" \
-        https://raw.githubusercontent.com/catppuccin/alacritty/main/catppuccin-mocha.toml
-fi
+mkdir -p "$HOME/.config/ghostty"
+cp "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
 
 mkdir -p "$HOME/.config/btop/themes"
 cp "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"

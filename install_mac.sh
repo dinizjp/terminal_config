@@ -45,8 +45,8 @@ done
 ok "CLI packages"
 
 # ─── Apps (cask) ──────────────────────────────────────────────────────────────
-brew list --cask alacritty &>/dev/null || brew install --cask alacritty
-ok "Alacritty"
+brew list --cask ghostty &>/dev/null || brew install --cask ghostty
+ok "Ghostty"
 
 # FiraCode Nerd Font
 brew list --cask font-fira-code-nerd-font &>/dev/null || {
@@ -88,14 +88,8 @@ ok "RTK"
 # ─── Dotfiles ─────────────────────────────────────────────────────────────────
 cp "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
-mkdir -p "$HOME/.config/alacritty/catppuccin"
-cp "$DOTFILES_DIR/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
-
-# Catppuccin theme para Alacritty
-if [ ! -f "$HOME/.config/alacritty/catppuccin/catppuccin-mocha.toml" ]; then
-    curl -fsSLo "$HOME/.config/alacritty/catppuccin/catppuccin-mocha.toml" \
-        https://raw.githubusercontent.com/catppuccin/alacritty/main/catppuccin-mocha.toml
-fi
+mkdir -p "$HOME/.config/ghostty"
+cp "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
 
 mkdir -p "$HOME/.config/btop/themes"
 cp "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"
