@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# install_linux.sh — JP's terminal setup for Linux
-# Suporte: Ubuntu/Debian, Arch, Fedora/RHEL, openSUSE
-# Usage: bash install_linux.sh
+# install_vps.sh — JP's terminal setup for VPS/servers (SSH, headless)
+# Sem GUI, sem fontes, sem terminal emulator — só CLI + Claude
+# Suporte: Ubuntu/Debian, Arch, Fedora, openSUSE
+# Usage: bash install_vps.sh
 
 set -euo pipefail
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 ok()   { echo -e "${GREEN}[OK]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 safe_copy() {
     local src="$1" dst="$2"
@@ -17,76 +20,52 @@ safe_copy() {
     cp -r "$src" "$dst"
 }
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 echo ""
-echo "=== JP Terminal Setup — Linux ==="
+echo "=== JP Terminal Setup — VPS/Server ==="
 echo ""
 
 # ─── Detectar distro ──────────────────────────────────────────────────────────
 detect_distro() {
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        echo "$ID"
-    else
-        echo "unknown"
-    fi
+    [ -f /etc/os-release ] && { . /etc/os-release; echo "$ID"; } || echo "unknown"
 }
-
 DISTRO=$(detect_distro)
 
 install_pkg() {
     case "$DISTRO" in
-        ubuntu|debian|linuxmint|pop)
-            sudo apt-get install -y "$@" ;;
-        arch|manjaro|endeavouros|garuda)
-            sudo pacman -S --noconfirm "$@" ;;
-        fedora|rhel|centos|rocky|almalinux)
-            sudo dnf install -y "$@" ;;
-        opensuse*|sles)
-            sudo zypper install -y "$@" ;;
-        *)
-            warn "Distro '$DISTRO' não reconhecida. Instale manualmente: $*"
-            return 1 ;;
+        ubuntu|debian|linuxmint|pop)  sudo apt-get install -y "$@" ;;
+        arch|manjaro|endeavouros)     sudo pacman -S --noconfirm "$@" ;;
+        fedora|rhel|centos|rocky)     sudo dnf install -y "$@" ;;
+        opensuse*)                    sudo zypper install -y "$@" ;;
+        *) warn "Distro '$DISTRO' não reconhecida. Instale manualmente: $*"; return 1 ;;
     esac
 }
 
 # ─── Update ───────────────────────────────────────────────────────────────────
 case "$DISTRO" in
-    ubuntu|debian|linuxmint|pop)
-        sudo apt-get update -qq ;;
-    arch|manjaro|endeavouros|garuda)
-        sudo pacman -Sy --noconfirm ;;
-    fedora|rhel|centos|rocky|almalinux)
-        sudo dnf check-update -q || true ;;
-    opensuse*|sles)
-        sudo zypper refresh ;;
+    ubuntu|debian|linuxmint|pop) sudo apt-get update -qq ;;
+    arch|manjaro|endeavouros)    sudo pacman -Sy --noconfirm ;;
+    fedora|rhel|centos|rocky)    sudo dnf check-update -q || true ;;
+    opensuse*)                   sudo zypper refresh ;;
 esac
 
 # ─── Pacotes base ─────────────────────────────────────────────────────────────
-BASE_PKGS_APT=(zsh git curl wget unzip micro bat fzf btop fd-find ripgrep fastfetch)
-BASE_PKGS_ARCH=(zsh git curl wget unzip micro bat fzf btop fd ripgrep fastfetch)
-BASE_PKGS_DNF=(zsh git curl wget unzip micro bat fzf btop fd-find ripgrep fastfetch)
-BASE_PKGS_ZYPPER=(zsh git curl wget unzip micro bat fzf btop fd ripgrep)
-
 case "$DISTRO" in
     ubuntu|debian|linuxmint|pop)
-        sudo apt-get install -y "${BASE_PKGS_APT[@]}" 2>/dev/null || \
-        sudo apt-get install -y zsh git curl wget unzip bat fzf btop fd-find ripgrep ;;
-    arch|manjaro|endeavouros|garuda)
-        sudo pacman -S --noconfirm "${BASE_PKGS_ARCH[@]}" ;;
-    fedora|rhel|centos|rocky|almalinux)
-        sudo dnf install -y "${BASE_PKGS_DNF[@]}" 2>/dev/null || \
+        sudo apt-get install -y zsh git curl wget unzip micro bat fzf btop fd-find ripgrep fastfetch 2>/dev/null || \
+        sudo apt-get install -y zsh git curl wget unzip bat fzf ripgrep ;;
+    arch|manjaro|endeavouros)
+        sudo pacman -S --noconfirm zsh git curl wget unzip micro bat fzf btop fd ripgrep fastfetch ;;
+    fedora|rhel|centos|rocky)
         sudo dnf install -y zsh git curl wget unzip bat fzf btop ripgrep ;;
-    opensuse*|sles)
-        sudo zypper install -y "${BASE_PKGS_ZYPPER[@]}" ;;
+    opensuse*)
+        sudo zypper install -y zsh git curl wget unzip bat fzf btop ripgrep ;;
 esac
 ok "Pacotes base"
 
-# ─── eza (via cargo ou binário) ───────────────────────────────────────────────
+# ─── eza ──────────────────────────────────────────────────────────────────────
 if ! command -v eza &>/dev/null; then
     case "$DISTRO" in
-        arch|manjaro|endeavouros|garuda)
+        arch|manjaro|endeavouros)
             sudo pacman -S --noconfirm eza ;;
         ubuntu|debian|linuxmint|pop)
             sudo apt-get install -y gpg
@@ -97,25 +76,20 @@ if ! command -v eza &>/dev/null; then
                 | sudo tee /etc/apt/sources.list.d/gierens.list
             sudo apt-get update -qq && sudo apt-get install -y eza ;;
         *)
-            if command -v cargo &>/dev/null; then
-                cargo install eza
-            else
-                warn "eza: instale manualmente de https://github.com/eza-community/eza/releases"
-            fi ;;
+            command -v cargo &>/dev/null && cargo install eza || \
+            warn "eza: instale manualmente de https://github.com/eza-community/eza/releases" ;;
     esac
 fi
 ok "eza"
 
 # ─── Starship ─────────────────────────────────────────────────────────────────
-if ! command -v starship &>/dev/null; then
-    curl -fsSL https://starship.rs/install.sh | sh -s -- -y
-fi
+command -v starship &>/dev/null || curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 ok "Starship"
 
 # ─── Node.js ──────────────────────────────────────────────────────────────────
 if ! command -v node &>/dev/null; then
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - 2>/dev/null || true
-    install_pkg nodejs 2>/dev/null || warn "Instale Node.js manualmente: https://nodejs.org"
+    install_pkg nodejs 2>/dev/null || warn "Instale Node.js: https://nodejs.org"
 fi
 ok "Node.js"
 
@@ -148,45 +122,12 @@ fi
 command -v rtk &>/dev/null && rtk init -g
 ok "RTK"
 
-# ─── Ghostty ─────────────────────────────────────────────────────────────────
-if ! command -v ghostty &>/dev/null; then
-    case "$DISTRO" in
-        arch|manjaro|endeavouros|garuda)
-            sudo pacman -S --noconfirm ghostty 2>/dev/null || \
-            (command -v yay &>/dev/null && yay -S --noconfirm ghostty) || \
-            warn "Instale Ghostty manualmente: https://ghostty.org/download" ;;
-        *)
-            if command -v flatpak &>/dev/null; then
-                flatpak install -y flathub com.mitchellh.ghostty 2>/dev/null || true
-            else
-                warn "Instale Ghostty manualmente: https://ghostty.org/download"
-            fi ;;
-    esac
-fi
-ok "Ghostty"
-
-# ─── FiraCode Nerd Font ───────────────────────────────────────────────────────
-FONT_DIR="$HOME/.local/share/fonts"
-mkdir -p "$FONT_DIR"
-if ! fc-list | grep -qi "FiraCode Nerd"; then
-    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
-    TMP_FONT=$(mktemp -d)
-    curl -fsSL "$FONT_URL" -o "$TMP_FONT/FiraCode.zip"
-    unzip -q "$TMP_FONT/FiraCode.zip" -d "$FONT_DIR"
-    rm -rf "$TMP_FONT"
-    fc-cache -f
-fi
-ok "FiraCode Nerd Font"
-
 # ─── Dotfiles ─────────────────────────────────────────────────────────────────
 safe_copy "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
-mkdir -p "$HOME/.config/ghostty"
-safe_copy "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
-
 mkdir -p "$HOME/.config/btop/themes"
-safe_copy "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"
-safe_copy "$DOTFILES_DIR/.config/btop/themes/catppuccin_mocha.theme"   "$HOME/.config/btop/themes/catppuccin_mocha.theme"
+safe_copy "$DOTFILES_DIR/.config/btop/btop.conf"                     "$HOME/.config/btop/btop.conf"
+safe_copy "$DOTFILES_DIR/.config/btop/themes/catppuccin_mocha.theme" "$HOME/.config/btop/themes/catppuccin_mocha.theme"
 
 mkdir -p "$HOME/.config/eza"
 safe_copy "$DOTFILES_DIR/.config/eza/config.yaml" "$HOME/.config/eza/config.yaml"
@@ -197,7 +138,7 @@ mkdir -p "$HOME/.config/micro"
 
 safe_copy "$DOTFILES_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
 
-ok "Dotfiles copiados"
+ok "Dotfiles copiados (backup criado se existia)"
 
 # ─── Shell padrão ─────────────────────────────────────────────────────────────
 ZSH_PATH="$(which zsh)"
@@ -223,14 +164,14 @@ ok "Claude Code marketplaces configurados"
 echo ""
 echo "=== Setup concluído! ==="
 echo ""
-echo "Reinicie o terminal e então dentro do Claude Code rode:"
+echo "Execute: exec zsh"
+echo ""
+echo "Depois dentro do Claude Code rode:"
 echo ""
 echo "  /plugin install caveman"
-echo "  /plugin install claude-hud"
 echo "  /plugin install context-mode"
 echo "  /reload-plugins"
-echo "  /claude-hud:setup"
 echo ""
-echo "Crie ~/.zshrc.local com suas chaves de API (não commitado):"
-echo "  export ANTHROPIC_API_KEY=\"sk-...\""
+echo "Crie ~/.zshrc.local com suas chaves de API:"
+echo "  export ANTHROPIC_API_KEY=\"sk-ant-...\""
 echo ""

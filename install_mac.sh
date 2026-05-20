@@ -8,6 +8,14 @@ GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 ok()   { echo -e "${GREEN}[OK]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 
+safe_copy() {
+    local src="$1" dst="$2"
+    if [ -f "$dst" ] || [ -d "$dst" ]; then
+        mv "$dst" "${dst}.bak.$(date +%Y%m%d%H%M%S)"
+    fi
+    cp -r "$src" "$dst"
+}
+
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ""
@@ -86,22 +94,23 @@ command -v rtk &>/dev/null && rtk init -g
 ok "RTK"
 
 # ─── Dotfiles ─────────────────────────────────────────────────────────────────
-cp "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+safe_copy "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
 mkdir -p "$HOME/.config/ghostty"
-cp "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
+safe_copy "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
 
 mkdir -p "$HOME/.config/btop/themes"
-cp "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"
-cp "$DOTFILES_DIR/.config/btop/themes/catppuccin_mocha.theme"   "$HOME/.config/btop/themes/catppuccin_mocha.theme"
+safe_copy "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"
+safe_copy "$DOTFILES_DIR/.config/btop/themes/catppuccin_mocha.theme"   "$HOME/.config/btop/themes/catppuccin_mocha.theme"
 
 mkdir -p "$HOME/.config/eza"
-cp "$DOTFILES_DIR/.config/eza/config.yaml" "$HOME/.config/eza/config.yaml"
+safe_copy "$DOTFILES_DIR/.config/eza/config.yaml" "$HOME/.config/eza/config.yaml"
 
 mkdir -p "$HOME/.config/micro"
-cp "$DOTFILES_DIR/.config/micro/settings.json" "$HOME/.config/micro/settings.json" 2>/dev/null || true
+[ -f "$DOTFILES_DIR/.config/micro/settings.json" ] && \
+    safe_copy "$DOTFILES_DIR/.config/micro/settings.json" "$HOME/.config/micro/settings.json"
 
-cp "$DOTFILES_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
+safe_copy "$DOTFILES_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
 
 ok "Dotfiles copiados"
 

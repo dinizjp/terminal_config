@@ -18,6 +18,13 @@ cd terminal_config
 bash install_linux.sh
 ```
 
+**VPS/Servidor** (headless, acesso SSH):
+```bash
+git clone https://github.com/dinizjp/terminal_config.git
+cd terminal_config
+bash install_vps.sh
+```
+
 ## O que instala
 
 | Ferramenta | Descrição |
@@ -36,6 +43,16 @@ bash install_linux.sh
 | Claude Code | CLI da Anthropic |
 | Bun | Runtime JS rápido |
 | RTK | Proxy CLI para economizar tokens |
+
+## Scripts
+
+| Script | Uso |
+|---|---|
+| `install_mac.sh` | macOS com Ghostty, fontes, apps GUI |
+| `install_linux.sh` | Linux desktop com Ghostty |
+| `install_vps.sh` | VPS/servidor headless, só CLI |
+
+> Dotfiles existentes são preservados com backup automático (`arquivo.bak.YYYYMMDDHHMMSS`).
 
 ## Tema
 
