@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # install_vps.sh — JP's terminal setup for VPS/servers (SSH, headless)
-# Sem GUI, sem fontes, sem terminal emulator — só CLI + Claude
+# Tudo que o Mac tem, exceto apps GUI (Ghostty)
 # Suporte: Ubuntu/Debian, Arch, Fedora, openSUSE
 # Usage: bash install_vps.sh
 
@@ -122,6 +122,19 @@ fi
 command -v rtk &>/dev/null && rtk init -g
 ok "RTK"
 
+# ─── FiraCode Nerd Font ───────────────────────────────────────────────────────
+FONT_DIR="$HOME/.local/share/fonts"
+mkdir -p "$FONT_DIR"
+if ! fc-list 2>/dev/null | grep -qi "FiraCode Nerd"; then
+    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+    TMP_FONT=$(mktemp -d)
+    curl -fsSL "$FONT_URL" -o "$TMP_FONT/FiraCode.zip"
+    unzip -q "$TMP_FONT/FiraCode.zip" -d "$FONT_DIR"
+    rm -rf "$TMP_FONT"
+    fc-cache -f 2>/dev/null || true
+fi
+ok "FiraCode Nerd Font"
+
 # ─── Dotfiles ─────────────────────────────────────────────────────────────────
 safe_copy "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
@@ -169,8 +182,10 @@ echo ""
 echo "Depois dentro do Claude Code rode:"
 echo ""
 echo "  /plugin install caveman"
+echo "  /plugin install claude-hud"
 echo "  /plugin install context-mode"
 echo "  /reload-plugins"
+echo "  /claude-hud:setup"
 echo ""
 echo "Crie ~/.zshrc.local com suas chaves de API:"
 echo "  export ANTHROPIC_API_KEY=\"sk-ant-...\""
