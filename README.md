@@ -56,7 +56,12 @@ bash install_vps.sh
 
 ## Tema
 
-Catppuccin Mocha em todos os apps (ghostty, btop, eza).
+Ghostty: **Cursed VHS** (tema embutido, fundo roxo escuro `#1c082c`), escolhido porque o cinza dele é claro e legível.
+O Catppuccin Mocha anterior fica salvo em `~/.config/ghostty/config.catppuccin`. Para voltar:
+```bash
+cp ~/.config/ghostty/config.catppuccin ~/.config/ghostty/config   # depois cmd+shift+, no Ghostty
+```
+btop, eza e micro continuam em Catppuccin Mocha.
 
 ## Chaves de API
 
