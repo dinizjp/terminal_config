@@ -99,6 +99,8 @@ safe_copy "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 mkdir -p "$HOME/.config/ghostty"
 safe_copy "$DOTFILES_DIR/.config/ghostty/config" "$HOME/.config/ghostty/config"
 cp "$DOTFILES_DIR/.config/ghostty/config.catppuccin" "$HOME/.config/ghostty/config.catppuccin"
+mkdir -p "$HOME/Library/Application Support/com.mitchellh.ghostty"
+safe_copy "$DOTFILES_DIR/.config/ghostty/macos-app-support.config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 
 mkdir -p "$HOME/.config/btop/themes"
 safe_copy "$DOTFILES_DIR/.config/btop/btop.conf"                       "$HOME/.config/btop/btop.conf"
