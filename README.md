@@ -63,7 +63,7 @@ cp ~/.config/ghostty/config.catppuccin ~/.config/ghostty/config   # depois cmd+s
 ```
 btop, eza e micro continuam em Catppuccin Mocha.
 
-No macOS, `macos-app-support.config` vai para `~/Library/Application Support/com.mitchellh.ghostty/config`: fonte 15, fundo sólido (opacidade 1.0) e desfoque.
+No macOS, `macos-app-support.config` vai para `~/Library/Application Support/com.mitchellh.ghostty/config`: fonte 15, fundo 70% opaco (`background-opacity = 0.7`) e desfoque.
 
 Prompt: oh-my-zsh com o tema **agnoster** (`CURRENT_FG="#1c082c"` deixa o texto dos blocos escuro e legível no Cursed VHS). O starship continua instalado, mas o `.zshrc` não o usa.
 
